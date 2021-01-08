@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BookingPage {
 
-    private WebDriver driver;
+    private final WebDriver driver;
 
     public BookingPage(WebDriver driver) {
         this.driver = driver;
@@ -87,16 +87,17 @@ public class BookingPage {
 
         List<WebElement> results = driver.findElements(By.xpath("//span[contains(@class,\"sr-hotel__name\")]"));
         List<String> hotels = Lists.newArrayList();
-        for (int i = 0; i < results.size(); i++) {
-            hotels.add(results.get(i).getText());
+        for (WebElement result : results) {
+            hotels.add(result.getText());
         }
         return hotels;
     }
 
 
     public void ClickAcceptCookies() {
-        if (buttonAcceptCookies.isDisplayed()) {
+        try {
             buttonAcceptCookies.click();
+        } catch (NoSuchElementException ignored) {
         }
     }
 
@@ -137,12 +138,6 @@ public class BookingPage {
         calendarDate(dtf.format(checkOut)).click();
     }
 
-    public void SetCheckOutDate(LocalDate date) {
-        calendarCheckOutDate.click();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        calendarDate(dtf.format(date)).click();
-    }
-
     public void SetAdults(Integer adults) {
         selectAdults.click();
         itemInAdultsList(adults);
@@ -173,7 +168,7 @@ public class BookingPage {
     public void FilterByFunThingsToDo(String activity) {
         try {
             filtersShowAll("filter_popular_activities").click();
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException ignored) {
         }
         try {
             checkBoxFunThingsToDo(activity).click();
